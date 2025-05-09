@@ -13,7 +13,7 @@ const botOptions: mineflayer.BotOptions = {
   username: config.minecraft.username,
   password: config.minecraft.password,
   auth: config.minecraft.auth,
-  version: config.minecraft.version || undefined,
+  version: config.minecraft.version === true ? undefined : config.minecraft.version, // Correctly handle boolean 'true'
   checkTimeoutInterval: 60 * 1000,
   defaultChatPatterns: true,
 };

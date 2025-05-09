@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
 import { Bot } from 'mineflayer';
-import { Item } from 'prismarine-item'; // Import Item type
+import { Item as MinecraftDataItem } from 'minecraft-data'; // Changed Item import
 import { config } from './config';
 import { getRecentBotActionsSummary } from './memory';
 import { getPlayerChatContext, recordPlayerMessage } from './playerMemory'; // Import player memory functions
@@ -19,7 +19,7 @@ async function generateResponse(prompt: string, systemPrompt: string = SUVA_SYST
   if (!genAI) return "I'm sorry, my AI brain is a bit foggy right now (Gemini API key missing).";
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     const chat = model.startChat({
       history: [{ role: "user", parts: [{ text: systemPrompt }] }],
       generationConfig: {
@@ -42,7 +42,7 @@ async function generateResponse(prompt: string, systemPrompt: string = SUVA_SYST
   }
 }
 
-function formatRecipe(bot: Bot, item: Item, recipe: any): string {
+function formatRecipe(bot: Bot, item: MinecraftDataItem, recipe: any): string { // Changed Item type here
   const ingredients = recipe.delta
     .filter((change: { id: number; count: number; }) => change.count < 0) // Ingredients have negative counts
     .map((ing: { id: number; count: number; }) => {
@@ -76,9 +76,9 @@ async function getRecipeInfo(bot: Bot, itemName: string): Promise<string | null>
   const recipesNoTable = bot.recipesFor(item.id, null, 1, false); // Check recipes not requiring a table
 
   if (recipes.length > 0) {
-    return formatRecipe(bot, item, recipes[0]);
+    return formatRecipe(bot, item, recipes[0]); // item here is MinecraftDataItem
   } else if (recipesNoTable.length > 0) {
-    return formatRecipe(bot, item, recipesNoTable[0]);
+    return formatRecipe(bot, item, recipesNoTable[0]); // item here is MinecraftDataItem
   }
 
   return `I don't seem to know a recipe for ${item.displayName}. Maybe it's crafted differently or I need an update!`;
